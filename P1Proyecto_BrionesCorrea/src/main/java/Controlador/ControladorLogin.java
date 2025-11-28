@@ -1,14 +1,9 @@
 package Controlador;
 
-import Modelo.Administador;
-import Modelo.CajeroModelo;
-import Modelo.Usuario;
-import Vista.Login;
-import Vista.AdministradorInicio;
-import Vista.Cajero;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JOptionPane;
+import Modelo.*;
+import Vista.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 public class ControladorLogin implements ActionListener {
 
@@ -32,37 +27,36 @@ public class ControladorLogin implements ActionListener {
         String usuario = vista.txtUsuario.getText();
         String contrasena = vista.txtContrasena.getText();
 
-        Usuario user = autenticarUsuario(usuario, contrasena);
+        //  AQUÍ LLAMAMOS A MONGODB
+        Usuario user = MongoDB.buscarUsuario(usuario, contrasena);
 
         if (user != null) {
+
             JOptionPane.showMessageDialog(vista,
                     "Bienvenido, " + user.getUsuario() + " (" + user.getRol() + ")");
 
             // Redirigir según el rol
-            if (user instanceof Administador) {
-                AdministradorInicio adminVista = new AdministradorInicio();
-                adminVista.setVisible(true);
-                vista.dispose();
-            } else if (user instanceof CajeroModelo) {
-               
-                Cajero cajeroVista = new Cajero();
-                cajeroVista.setVisible(true);
-                vista.dispose();
+            switch (user.getRol().toLowerCase()) {
+
+                case "administrador":
+                    AdministradorInicio adminVista = new AdministradorInicio();
+                    adminVista.setVisible(true);
+                    vista.dispose();
+                    break;
+
+                case "cajero":
+                    Cajero cajeroVista = new Cajero();
+                    cajeroVista.setVisible(true);
+                    vista.dispose();
+                    break;
+
+                default:
+                    JOptionPane.showMessageDialog(vista, "Rol no reconocido");
+                    break;
             }
 
         } else {
             JOptionPane.showMessageDialog(vista, "Usuario o contraseña incorrectos");
         }
-    }
-
-    // Aquí puedes cambiar por una conexión a base de datos si luego la agregas
-    private Usuario autenticarUsuario(String usuario, String contrasena) {
-        // Ejemplo con datos fijos
-        if (usuario.equals("admin") && contrasena.equals("1234")) {
-            return new Administador(usuario, contrasena);
-        } else if (usuario.equals("cajero") && contrasena.equals("abcd")) {
-            return new CajeroModelo(usuario, contrasena);
-        }
-        return null; // No coincide
     }
 }

@@ -8,19 +8,25 @@ import javax.swing.table.DefaultTableModel;
 public class Cajero extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Cajero.class.getName());
-    private final ControladorProductos controladorProductos = new ControladorProductos();
-    private final ControladorCajero controlador = new ControladorCajero();
+    private ControladorProductos controladorProductos;
+    private ControladorCajero controlador;
+
     private javax.swing.JTable tablaVentas;
 
     public Cajero() {
         initComponents();
+
+        // Inicializar controladores DESPUÉS de que los componentes existen
+        controladorProductos = new ControladorProductos();
+        controlador = new ControladorCajero();
         DefaultTableModel modeloCarrito = new DefaultTableModel(
                 new Object[]{"Código", "Nombre", "Cantidad", "Precio", "Subtotal"}, 0
         );
 
         tablaCarrito.setModel(modeloCarrito);
-         cargarTablaProductos();
+        cargarTablaProductos();
     }
+
     private void cargarTablaProductos() {
         try {
             String ruta = "InventarioFarmacia.xlsx";
@@ -29,6 +35,7 @@ public class Cajero extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
